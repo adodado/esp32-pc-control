@@ -19,6 +19,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         padding: 10px 20px;
         font-size: 24px;
         text-align: center;
+      min-width: 250px;
         outline: none;
         color: #fff;
         background-color: #2f4468;
@@ -44,7 +45,11 @@ const char index_html[] PROGMEM = R"rawliteral(
   </head>
   <body>
     <h1>ESP32 PC Control</h1>
-    <button class="button" onmousedown="toggleCheckbox('on');" ontouchstart="toggleCheckbox('on');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">Turn On/Off</button>
+    <button class="button" onmousedown="toggleCheckbox('on');" ontouchstart="toggleCheckbox('on');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">Power Button</button>
+        <br><br>
+        <button class="button" onmousedown="toggleCheckbox('hard_shutdown_on');" ontouchstart="toggleCheckbox('hard_shutdown_on');" onmouseup="toggleCheckbox('hard_shutdown_off');" ontouchend="toggleCheckbox('hard_shutdown_off');">Hard Shutdown</button>
+    <br><br>
+        <button class="button" onmousedown="toggleCheckbox('sleep_on');" ontouchstart="toggleCheckbox('sleep_on');" onmouseup="toggleCheckbox('sleep_off');" ontouchend="toggleCheckbox('sleep_off');">Sleep Mode</button>
    <script>
    function toggleCheckbox(x) {
      var xhr = new XMLHttpRequest();
@@ -82,7 +87,7 @@ void setup() {
 
   server.on("/on", HTTP_GET, [] (AsyncWebServerRequest *request) {
     digitalWrite(output, HIGH);
-    delay(300);
+    delay(500);
     request->send(200, "text/plain", "ok");
   });
 
@@ -90,7 +95,24 @@ void setup() {
     digitalWrite(output, LOW);
     request->send(200, "text/plain", "ok");
   });
-  
+      server.on("/sleep_on", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    digitalWrite(output, HIGH);
+    delay(1000);
+    request->send(200, "text/plain", "ok");
+  });
+    server.on("/sleep_off", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    digitalWrite(output, LOW);
+    request->send(200, "text/plain", "ok");
+  });
+    server.on("/hard_shutdown_on", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    digitalWrite(output, HIGH);
+    delay(8000);
+    request->send(200, "text/plain", "ok");
+  });
+    server.on("/hard_shutdown_off", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    digitalWrite(output, LOW);
+    request->send(200, "text/plain", "ok");
+  });
   server.onNotFound(notFound);
   server.begin();
 }

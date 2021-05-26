@@ -41,20 +41,34 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if(strTopic == "esp32/switch1")
     {
     switch1 = String((char*)payload);
-    if(switch1 == "ON")
+    if(switch1 == "POWER")
       {
-        Serial.println("ON");
+        Serial.println("POWER");
         digitalWrite(relayPin, HIGH);
+        delay(500);
+        digitalWrite(relayPin, LOW);
+      }
+    else if(switch1 == "SLEEP")
+      {
+        Serial.println("SLEEP");
+        digitalWrite(relayPin, HIGH);
+        delay(2000);
+        digitalWrite(relayPin, LOW);
+      }
+    else if(switch1 == "HARD_SHUTDOWN")
+      {
+        Serial.println("HARD_SHUTDOWN");
+        digitalWrite(relayPin, HIGH);
+        delay(8000);
+        digitalWrite(relayPin, LOW);
       }
     else
       {
-        Serial.println("OFF");
-        digitalWrite(relayPin, LOW);
+        Serial.println("BAD MESSAGE");
       }
     }
 }
- 
- 
+
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -80,7 +94,6 @@ void setup()
   setup_wifi(); 
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-
   pinMode(relayPin, OUTPUT);
 }
  

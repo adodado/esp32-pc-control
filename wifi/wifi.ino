@@ -3,8 +3,8 @@
 
 #include <ESPAsyncWebServer.h>
 
-const char* ssid = "WIFI SSID";
-const char* password = "WIFI PASSWORD";
+const char* ssid = "WIFI_SSID";
+const char* password = "WIFI_PASSWORD";
 
 const int output = 14;
 
@@ -48,8 +48,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button class="button" onmousedown="toggleCheckbox('on');" ontouchstart="toggleCheckbox('on');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">Power Button</button>
         <br><br>
         <button class="button" onmousedown="toggleCheckbox('hard_shutdown_on');" ontouchstart="toggleCheckbox('hard_shutdown_on');" onmouseup="toggleCheckbox('hard_shutdown_off');" ontouchend="toggleCheckbox('hard_shutdown_off');">Hard Shutdown</button>
-    <br><br>
-        <button class="button" onmousedown="toggleCheckbox('sleep_on');" ontouchstart="toggleCheckbox('sleep_on');" onmouseup="toggleCheckbox('sleep_off');" ontouchend="toggleCheckbox('sleep_off');">Sleep Mode</button>
    <script>
    function toggleCheckbox(x) {
      var xhr = new XMLHttpRequest();
@@ -87,7 +85,7 @@ void setup() {
 
   server.on("/on", HTTP_GET, [] (AsyncWebServerRequest *request) {
     digitalWrite(output, HIGH);
-    delay(500);
+    delay(300);
     request->send(200, "text/plain", "ok");
   });
 
@@ -95,18 +93,9 @@ void setup() {
     digitalWrite(output, LOW);
     request->send(200, "text/plain", "ok");
   });
-      server.on("/sleep_on", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    digitalWrite(output, HIGH);
-    delay(1000);
-    request->send(200, "text/plain", "ok");
-  });
-    server.on("/sleep_off", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    digitalWrite(output, LOW);
-    request->send(200, "text/plain", "ok");
-  });
     server.on("/hard_shutdown_on", HTTP_GET, [] (AsyncWebServerRequest *request) {
     digitalWrite(output, HIGH);
-    delay(8000);
+    delay(7000);
     request->send(200, "text/plain", "ok");
   });
     server.on("/hard_shutdown_off", HTTP_GET, [] (AsyncWebServerRequest *request) {

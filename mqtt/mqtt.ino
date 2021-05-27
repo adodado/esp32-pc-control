@@ -2,9 +2,14 @@
 #include <PubSubClient.h>
 
 // Update these with values suitable network.
-const char* ssid = "";
-const char* password = "";
-const char* mqtt_server = "";
+const char* ssid = "WIFI_SSID";
+const char* password = "WIFI_PASSWORD";
+const char* mqtt_server = "192.168.1.100";
+// const char* state_topic = "workstation/tele/STATE";
+// const char* availability_topic = "workstation/tele/LWT";
+// const char* power_switch_config_topic = "homeassistant/switch/workstation-power/config";
+// const char* hard_shutdown_config_topic = "homeassistant/switch/workstation-power/config";
+// const String hass_config = "{\"name\":\"Workstation-Power\",\"command_topic\":\"workstation/cmnd/POWER\",\"state_topic\":\"workstation/tele/STATE\",\"value_template\":\"{{value_json.POWER}}\",\"payload_off\":\"OFF\",\"payload_on\":\"ON\",\"availability_topic\":\"workstation/tele/LWT\",\"payload_available\":\"Online\",\"payload_not_available\":\"Offline\",\"unique_id\":\"2EB32AF_RL_1\",\"device\":{\"identifiers\":[\"2EB32AF\"]},\"platform\":\"mqtt\"}";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -38,28 +43,21 @@ void setup_wifi() {
 void callback(char* topic, byte* payload, unsigned int length) {
   payload[length] = '\0';
   strTopic = String((char*)topic);
-  if(strTopic == "esp32/switch1")
+  if(strTopic == "workstation/cmnd/POWER")
     {
     switch1 = String((char*)payload);
-    if(switch1 == "POWER")
+    if(switch1 == "ON")
       {
         Serial.println("POWER");
         digitalWrite(relayPin, HIGH);
-        delay(500);
+        delay(200);
         digitalWrite(relayPin, LOW);
       }
-    else if(switch1 == "SLEEP")
+    else if(switch1 == "OFF")
       {
-        Serial.println("SLEEP");
+        Serial.println("POWER");
         digitalWrite(relayPin, HIGH);
-        delay(2000);
-        digitalWrite(relayPin, LOW);
-      }
-    else if(switch1 == "HARD_SHUTDOWN")
-      {
-        Serial.println("HARD_SHUTDOWN");
-        digitalWrite(relayPin, HIGH);
-        delay(8000);
+        delay(200);
         digitalWrite(relayPin, LOW);
       }
     else
@@ -67,6 +65,24 @@ void callback(char* topic, byte* payload, unsigned int length) {
         Serial.println("BAD MESSAGE");
       }
     }
+    else if(strTopic == "workstation/cmnd/RESET"){
+    switch1 = String((char*)payload);
+    if(switch1 == "HARD_SHUTDOWN")
+      {
+        Serial.println("HARD_SHUTDOWN");
+        digitalWrite(relayPin, HIGH);
+        delay(7000);
+        digitalWrite(relayPin, LOW);
+      }
+    else
+      {
+        Serial.println("BAD MESSAGE");
+      }
+    }
+    else
+      {
+        Serial.println("BAD MESSAGE");
+      }
 }
 
 void reconnect() {
@@ -77,7 +93,7 @@ void reconnect() {
     if (client.connect("arduinoClient")) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.subscribe("esp32/#");
+      client.subscribe("workstation/#");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());

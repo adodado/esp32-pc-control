@@ -1,4 +1,4 @@
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <PubSubClient.h>
 
 // Update these with values suitable network.
@@ -92,7 +92,7 @@ void reconnect() {
     // Attempt to connect
     if (client.connect("arduinoClient")) {
       Serial.println("connected");
-      // Once connected, publish an announcement...
+      // Once connected, subscribe to everything under the workstation topic.
       client.subscribe("workstation/#");
     } else {
       Serial.print("failed, rc=");

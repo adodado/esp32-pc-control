@@ -171,7 +171,7 @@ void setup()
 
   server.on("/on", HTTP_GET, [] (AsyncWebServerRequest *request) {
     digitalWrite(relayPin, HIGH);
-    delay(300);
+    delay(200);
     request->send(200, "text/plain", "ok");
   });
 

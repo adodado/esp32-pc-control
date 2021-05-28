@@ -85,7 +85,7 @@ void setup() {
 
   server.on("/on", HTTP_GET, [] (AsyncWebServerRequest *request) {
     digitalWrite(output, HIGH);
-    delay(300);
+    delay(200);
     request->send(200, "text/plain", "ok");
   });
 
